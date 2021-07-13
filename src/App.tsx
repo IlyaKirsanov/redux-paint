@@ -4,12 +4,16 @@ import { currentStrokeSelector } from './store/selectors'
 
 import './App.css'
 import { beginStroke, endStroke, updateStroke } from './store/actions'
-import { drawStroke } from './canvasUtils'
+import { clearCanvas, drawStroke, setCanvasSize } from './canvasUtils'
+import { RootState } from './types'
+
+const WIDTH = 1024
+const HEIGHT = 768
 
 function App() {
 	
 	const canvasRef = useRef<HTMLCanvasElement>(null)
-	const currentStroke = useSelector(currentStrokeSelector)
+	const currentStroke = useSelector<RootState, RootState['currentStroke']>(currentStrokeSelector)
 	const isDrawing = !!currentStroke.points.length
 	
 	const getCanvasWithContext = (canvas = canvasRef.current) => {
@@ -40,16 +44,40 @@ function App() {
 		const { context } = getCanvasWithContext()
 		if (!context) return
 		requestAnimationFrame(() => drawStroke(context, currentStroke.points, currentStroke.color))
-	}, [currentStroke])
+	}, [ currentStroke ])
+	
+	useEffect(() => {
+		const { canvas, context } = getCanvasWithContext()
+		if (!canvas || !context) {
+			return
+		}
+		
+		setCanvasSize(canvas, WIDTH, HEIGHT)
+		
+		context.lineJoin = "round"
+		context.lineCap = "round"
+		context.lineWidth = 5
+		context.strokeStyle = "black"
+		
+		clearCanvas(canvas)
+	}, [])
 	
 	return (
-		<canvas
-			onMouseDown={ startDrawing }
-			onMouseUp={ endDrawing }
-			onMouseOut={ endDrawing }
-			onMouseMove={ draw }
-			ref={ canvasRef }
-		/>
+		<div className="window">
+			<div className="title-bar">
+				<div className="title-bar-text">Redux Paint</div>
+				<div className="title-bar-controls">
+					<button aria-label="Close"/>
+				</div>
+			</div>
+			<canvas
+				onMouseDown={ startDrawing }
+				onMouseUp={ endDrawing }
+				onMouseOut={ endDrawing }
+				onMouseMove={ draw }
+				ref={ canvasRef }
+			/>
+		</div>
 	)
 }
 
