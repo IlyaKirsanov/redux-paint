@@ -6,6 +6,7 @@ import './App.css'
 import { beginStroke, endStroke, updateStroke } from './store/actions'
 import { clearCanvas, drawStroke, setCanvasSize } from './canvasUtils'
 import { RootState } from './types'
+import ColorPanel from './ColorPanel'
 
 const WIDTH = 1024
 const HEIGHT = 768
@@ -54,10 +55,10 @@ function App() {
 		
 		setCanvasSize(canvas, WIDTH, HEIGHT)
 		
-		context.lineJoin = "round"
-		context.lineCap = "round"
+		context.lineJoin = 'round'
+		context.lineCap = 'round'
 		context.lineWidth = 5
-		context.strokeStyle = "black"
+		context.strokeStyle = 'black'
 		
 		clearCanvas(canvas)
 	}, [])
@@ -67,15 +68,16 @@ function App() {
 			<div className="title-bar">
 				<div className="title-bar-text">Redux Paint</div>
 				<div className="title-bar-controls">
-					<button aria-label="Close"/>
+					<button aria-label="Close" />
 				</div>
 			</div>
+			<ColorPanel />
 			<canvas
-				onMouseDown={ startDrawing }
-				onMouseUp={ endDrawing }
-				onMouseOut={ endDrawing }
-				onMouseMove={ draw }
-				ref={ canvasRef }
+				onMouseDown={startDrawing}
+				onMouseUp={endDrawing}
+				onMouseOut={endDrawing}
+				onMouseMove={draw}
+				ref={canvasRef}
 			/>
 		</div>
 	)
